@@ -7,9 +7,11 @@ ARG QL_URL=https://github.com/${QL_MAINTAINER}/qinglong.git
 ARG QL_BRANCH=debian
 # 新增提交点参数
 ARG QL_COMMIT="a743aa8115423f365ef876ed512f4b6ed9639991"
+ARG QL_COMMIT2="v2.17.9"
 
 ENV QL_DIR=/ql \
-  QL_BRANCH=${QL_BRANCH}
+  QL_BRANCH=${QL_BRANCH} \
+  QL_COMMIT2=${QL_COMMIT2}
 
 COPY --from=nodebuilder /usr/local/bin/node /usr/local/bin/
 COPY --from=nodebuilder /usr/local/lib/node_modules/. /usr/local/lib/node_modules/
@@ -116,7 +118,7 @@ RUN git clone -b ${QL_BRANCH} ${QL_URL} ${QL_DIR} && \
   cp -f .env.example .env && \
   chmod 777 ${QL_DIR}/shell/*.sh && \
   chmod 777 ${QL_DIR}/docker/*.sh && \
-  git clone --depth=1 -b ${QL_BRANCH} https://github.com/${QL_MAINTAINER}/qinglong-static.git /static && \
+  git clone --depth=1 -b ${QL_COMMIT2} https://github.com/${QL_MAINTAINER}/qinglong-static.git /static && \
   mkdir -p ${QL_DIR}/static && \
   cp -rf /static/* ${QL_DIR}/static && \
   rm -rf /static && \
