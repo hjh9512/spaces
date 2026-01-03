@@ -7,7 +7,7 @@ ARG QL_URL=https://github.com/${QL_MAINTAINER}/qinglong.git
 ARG QL_BRANCH=debian
 # 新增提交点参数
 ARG QL_COMMIT="a743aa8115423f365ef876ed512f4b6ed9639991"
-ARG QL_COMMIT2="v2.17.9"
+ARG QL_COMMIT2=v2.17.9
 
 ENV QL_DIR=/ql \
   QL_BRANCH=${QL_BRANCH} \
