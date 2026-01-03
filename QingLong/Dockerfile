@@ -5,6 +5,8 @@ ARG QL_MAINTAINER="whyour"
 LABEL maintainer="${QL_MAINTAINER}"
 ARG QL_URL=https://github.com/${QL_MAINTAINER}/qinglong.git
 ARG QL_BRANCH=debian
+# 新增提交点参数
+ARG QL_COMMIT="a743aa8115423f365ef876ed512f4b6ed9639991"
 
 ENV QL_DIR=/ql \
   QL_BRANCH=${QL_BRANCH}
@@ -18,7 +20,10 @@ RUN set -x && \
   git config --global user.email "qinglong@@users.noreply.github.com" && \
   git config --global user.name "qinglong" && \
   git config --global http.postBuffer 524288000 && \
-  git clone --depth=1 -b ${QL_BRANCH} ${QL_URL} ${QL_DIR} 
+  # 修改克隆命令：先克隆完整仓库，然后检出特定提交点
+  git clone -b ${QL_BRANCH} ${QL_URL} ${QL_DIR} && \
+  cd ${QL_DIR} && \
+  git checkout ${QL_COMMIT}
 
 RUN mkdir /tmp/build
 RUN cp ${QL_DIR}/package.json ${QL_DIR}/.npmrc ${QL_DIR}/pnpm-lock.yaml /tmp/build/
@@ -33,6 +38,8 @@ ARG QL_MAINTAINER="whyour"
 LABEL maintainer="${QL_MAINTAINER}"
 ARG QL_URL=https://github.com/${QL_MAINTAINER}/qinglong.git
 ARG QL_BRANCH=debian
+# 新增提交点参数
+ARG QL_COMMIT="a743aa8115423f365ef876ed512f4b6ed9639991"
 
 ENV PNPM_HOME=/root/.local/share/pnpm \
   PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/root/.local/share/pnpm:/root/.local/share/pnpm/global/5/node_modules:$PNPM_HOME \
@@ -102,8 +109,10 @@ RUN curl -fsSL https://ollama.com/install.sh | sh
 
 
 ARG SOURCE_COMMIT
-RUN git clone --depth=1 -b ${QL_BRANCH} ${QL_URL} ${QL_DIR} && \
+# 修改这里的克隆命令，使其可以检出特定提交
+RUN git clone -b ${QL_BRANCH} ${QL_URL} ${QL_DIR} && \
   cd ${QL_DIR} && \
+  git checkout ${QL_COMMIT} && \
   cp -f .env.example .env && \
   chmod 777 ${QL_DIR}/shell/*.sh && \
   chmod 777 ${QL_DIR}/docker/*.sh && \
@@ -155,9 +164,6 @@ RUN echo '{ \
 
 # Change ownership of the configuration directory
 RUN chown -R coder:coder /home/coder/.local/share/code-server
-
-# Install Python extension for code-server
-#RUN sudo -u coder code-server --install-extension ms-python.python
 
 # Switch to the coder user for running code-server
 USER coder
